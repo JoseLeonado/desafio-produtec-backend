@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.jlcb.desafioprodutecbackend.model.enums.TipoStatus;
 
@@ -30,6 +32,10 @@ public class Produto {
 	
 	@Column(name = "descricao")
 	private String descricao;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_colecao")
+	private Colecao colecao;
 	
 	@Column(name = "status")
 	private TipoStatus status;
