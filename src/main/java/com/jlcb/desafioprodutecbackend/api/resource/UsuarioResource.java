@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,12 +60,12 @@ public class UsuarioResource {
 	@PutMapping("{id}") /* Editar */
 	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDTO dto) {
 		
-		return usuarioService.buscarUsuarioPorId(id).map(lancamentoEncontrado -> { /* Caso encontre um lançamento pelo id, então iremos atualiza o mesmo */
+		return usuarioService.buscarUsuarioPorId(id).map(usuarioEncontrado -> { /* Caso encontre um lançamento pelo id, então iremos atualiza o mesmo */
 			
 			try {
 				
 				Usuario usuario =converterDtoParaUsuario(dto);
-				usuario.setId(lancamentoEncontrado.getId());
+				usuario.setId(usuarioEncontrado.getId());
 				usuarioService.atualizar(usuario);
 				
 				return ResponseEntity.ok(usuario);
@@ -72,6 +73,17 @@ public class UsuarioResource {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
 		}).orElseGet(() -> new ResponseEntity<>("Usuário não encontrado.", HttpStatus.BAD_REQUEST)); 
+	}
+	
+	@DeleteMapping("{id}")
+	public ResponseEntity<?> deletar(@PathVariable("id") Long id) {
+		
+		return usuarioService.buscarUsuarioPorId(id).map(usuarioEncontrado -> {
+			
+			usuarioService.deletar(usuarioEncontrado);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}).orElseGet(() -> new ResponseEntity<>("Usuário não encontrado.", HttpStatus.BAD_REQUEST));
+		
 	}
 	
 	
