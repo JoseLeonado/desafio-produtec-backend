@@ -39,4 +39,8 @@ public class Produto {
 	
 	@Column(name = "status")
 	private TipoStatus status;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_preco")
+	private Preco preco;
 }
