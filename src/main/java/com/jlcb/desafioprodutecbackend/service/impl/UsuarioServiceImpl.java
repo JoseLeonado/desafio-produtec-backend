@@ -1,6 +1,7 @@
 package com.jlcb.desafioprodutecbackend.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
@@ -19,9 +20,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public Usuario salvar(Usuario usuario) {
 
-		return null;
+		validarEmail(usuario.getEmail());
+		
+		return repository.save(usuario);
 	}
 
 	@Override
@@ -32,6 +36,5 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (isExiste) {
 			throw new RegraNegocioException("Já existe um usuário cadastrado com esse email.");
 		}
-
 	}
 }
