@@ -2,11 +2,15 @@ package com.jlcb.desafioprodutecbackend.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.jlcb.desafioprodutecbackend.model.enums.StatusUsuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +41,10 @@ public class Usuario {
 	@ManyToOne
 	@JoinColumn(name = "id_empresa")
 	private Empresa empresa;
+	
+	@Column(name = "status")
+	@Enumerated(value = EnumType.STRING)
+	private StatusUsuario status;
 }
 
 
