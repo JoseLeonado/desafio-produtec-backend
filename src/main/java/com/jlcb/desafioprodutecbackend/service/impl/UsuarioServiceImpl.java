@@ -3,6 +3,7 @@ package com.jlcb.desafioprodutecbackend.service.impl;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jlcb.desafioprodutecbackend.exception.AutenticacoException;
@@ -11,6 +12,7 @@ import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.model.repository.UsuarioRepository;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
+@Service
 public class UsuarioServiceImpl implements UsuarioService {
 	
 	@Autowired

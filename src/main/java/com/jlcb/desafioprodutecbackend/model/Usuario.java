@@ -45,9 +45,9 @@ public class Usuario {
 	@JoinColumn(name = "id_empresa")
 	private Empresa empresa;
 	
-	@Column(name = "status")
-	@Enumerated(value = EnumType.STRING)
-	private TipoStatus status;
+//	@Column(name = "status")
+//	@Enumerated(value = EnumType.STRING)
+//	private TipoStatus status;
 }
 
 

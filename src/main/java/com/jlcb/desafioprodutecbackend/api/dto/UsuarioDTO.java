@@ -16,5 +16,5 @@ public class UsuarioDTO {
 	private String email;
 	private String senha;
 	private Long idEmpresa;
-	private String status;
+//	private String status;
 }
