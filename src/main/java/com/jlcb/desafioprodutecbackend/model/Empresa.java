@@ -31,7 +31,4 @@ public class Empresa {
 	
 	@Column(name = "nome_fantasia")
 	private String nomeFantasia;
-	
-	@Column(name = "telefone")
-	private String telefone;
 }
