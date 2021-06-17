@@ -40,10 +40,6 @@ public class Usuario {
 	@ManyToOne
 	@JoinColumn(name = "id_empresa")
 	private Empresa empresa;
-	
-//	@Column(name = "status")
-//	@Enumerated(value = EnumType.STRING)
-//	private TipoStatus status;
 }
 
 

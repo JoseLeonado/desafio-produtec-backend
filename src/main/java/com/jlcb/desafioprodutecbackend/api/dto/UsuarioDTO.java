@@ -24,5 +24,4 @@ public class UsuarioDTO {
 	@NotBlank(message = "Informe a senha do usuário.")
 	private String senha;
 	private Long idEmpresa;
-//	private String status;
 }

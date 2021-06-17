@@ -60,10 +60,6 @@ public class UsuarioResource {
 		usuario.setEmail(dto.getEmail());
 		usuario.setSenha(dto.getSenha());
 				
-//		if (dto.getSenha() != null) {
-//			usuario.setStatus(TipoStatus.valueOf(dto.getStatus()));
-//		}
-		
 		return usuario;
 	}
 }
