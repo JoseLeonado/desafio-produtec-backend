@@ -1,6 +1,6 @@
 package com.jlcb.desafioprodutecbackend.model.enums;
 
-public enum TipoStatus {
+public enum Status {
 
 	ATIVO,
 	INATIVO,

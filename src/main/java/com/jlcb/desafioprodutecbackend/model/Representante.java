@@ -5,8 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "id")
+@PrimaryKeyJoinColumn(name = "idUsuario")
 public class Representante extends Usuario {
+	
 	
 	@Column(name = "nome_fantasia")
 	private String nomeFantasia;

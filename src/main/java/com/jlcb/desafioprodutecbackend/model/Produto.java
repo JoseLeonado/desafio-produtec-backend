@@ -2,13 +2,15 @@ package com.jlcb.desafioprodutecbackend.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.jlcb.desafioprodutecbackend.model.enums.TipoStatus;
+import com.jlcb.desafioprodutecbackend.model.enums.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +40,8 @@ public class Produto {
 	private Colecao colecao;
 	
 	@Column(name = "status")
-	private TipoStatus status;
+	@Enumerated(EnumType.STRING) 
+	private Status status;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_preco")

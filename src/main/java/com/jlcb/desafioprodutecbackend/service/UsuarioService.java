@@ -6,16 +6,18 @@ import java.util.Optional;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
 
 public interface UsuarioService {
-
+	
 	Usuario autenticar(String email, String senha);
 	
 	Usuario salvar(Usuario usuario);
 	
 	void validarEmail(String email);
-	
+		
 	Usuario atualizar(Usuario usuario);
 	
 	void deletar(Usuario usuario);
+	
+	List<Usuario> listar(Usuario usuario);
 	
 	List<Usuario> buscar(Usuario usuario);
 	

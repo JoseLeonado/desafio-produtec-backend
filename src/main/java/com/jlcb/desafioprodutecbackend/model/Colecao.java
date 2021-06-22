@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.jlcb.desafioprodutecbackend.model.enums.TipoStatus;
+import com.jlcb.desafioprodutecbackend.model.enums.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,5 +32,5 @@ public class Colecao {
 	private String descricao;
 	
 	@Column(name = "status")
-	private TipoStatus status;
+	private Status status;
 }

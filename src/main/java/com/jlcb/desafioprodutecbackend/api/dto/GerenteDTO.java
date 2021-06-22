@@ -11,21 +11,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO {
-	
+public class GerenteDTO {
+		
 	private Long id;
 	
-	@NotBlank(message = "Informe o nome do usuário!")
+	@NotBlank(message = "Informe o nome do gerente!")
 	private String nome;
 	
-	@NotBlank(message = "Informe o email do usuário!")
+	@NotBlank(message = "Informe o email do gerente!")
 	private String email;
 	
-	@NotBlank(message = "Informe a senha do usuário!")
+	@NotBlank(message = "Informe a senha do gerente!")
 	private String senha;
-	
-	private Long empresa;
-	
-	@NotBlank(message = "Informe o perfil do usuário!")
-	private String perfil;
 }
