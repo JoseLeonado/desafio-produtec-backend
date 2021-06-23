@@ -13,21 +13,36 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
+	
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
+		String msgDeErro = "";
 		List<AtributoErroMensagem> errors = getErros(ex);
-		RequisicaoErroResposta errorResponse = getErroResposta(status, errors);
+		
+		int cont = 0;
+		
+		if (!errors.isEmpty()) {
+			
+			if (cont == 0) {
+				for (AtributoErroMensagem e : errors) {
+					msgDeErro = e.getErro();
+					cont++;
+				}
+			}
+		}
+		
+//		RequisicaoErroResposta errorResponse = getErroResposta(status, errors);
 
-		return new ResponseEntity<>(errorResponse, status);
+		return new ResponseEntity<>(msgDeErro, headers, status);
 	}
 
-	private RequisicaoErroResposta getErroResposta(HttpStatus status, List<AtributoErroMensagem> errors) {
-		return new RequisicaoErroResposta("A requisição possui campos inválidos", status.value(),
-				status.getReasonPhrase(), errors);
-	}
+//	private RequisicaoErroResposta getErroResposta(HttpStatus status, List<AtributoErroMensagem> errors) {
+//		return new RequisicaoErroResposta("A requisição possui campos inválidos", status.value(),
+//				status.getReasonPhrase(), errors);
+//	}
 
 	private List<AtributoErroMensagem> getErros(MethodArgumentNotValidException ex) {
 		return ex.getBindingResult().getFieldErrors().stream().map(error -> new AtributoErroMensagem(error.getField(),

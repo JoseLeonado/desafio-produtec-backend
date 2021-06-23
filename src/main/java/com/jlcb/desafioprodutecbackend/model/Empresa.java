@@ -23,7 +23,8 @@ public class Empresa {
 	@Column(name = "id")
 	private Long id;
 	
-	@Column(name = "cnpj")
+	@Column(name = "cnpj", unique = true)
+	
 	private String cnpj;
 	
 	@Column(name = "razao_social")

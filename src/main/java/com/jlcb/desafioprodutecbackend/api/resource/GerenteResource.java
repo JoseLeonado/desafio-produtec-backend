@@ -27,7 +27,7 @@ public class GerenteResource {
 	
 	@Autowired
 	private GerenteService gerenteService;
-		
+	
 	@GetMapping
 	public ResponseEntity<?> listar() {
 		
@@ -51,6 +51,8 @@ public class GerenteResource {
 		try {
 			
 			Gerente gerenteSalvo = gerenteService.salvar(gerente);
+			
+			
 			
 			return new ResponseEntity<>(gerenteSalvo, HttpStatus.CREATED);
 			

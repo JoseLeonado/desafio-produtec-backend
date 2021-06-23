@@ -9,6 +9,8 @@ public interface EmpresaService {
 	
 	Empresa salvar(Empresa empresa);
 	
+	void validarCnpj(String cnpj);
+	
 	Empresa atualizar(Empresa empresa);
 	
 	void deletar(Empresa empresa);

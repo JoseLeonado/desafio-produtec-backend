@@ -3,6 +3,8 @@ package com.jlcb.desafioprodutecbackend.api.resource;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,16 +43,16 @@ public class EmpresaResource {
 					.map(empresa -> new ResponseEntity<>(converterEmpresaParaDto(empresa), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
-	
+		
 	@PostMapping
-	public ResponseEntity<?> salvar(@RequestBody EmpresaDTO dto) {
+	public ResponseEntity<?> salvar(@Valid @RequestBody EmpresaDTO dto) {
 		
 		Empresa empresa = converterDtoParaEmpresa(dto);
 		
 		try {
 			
 			Empresa empresaSalva = empresaService.salvar(empresa);
-			
+
 			return new ResponseEntity<>(empresaSalva, HttpStatus.CREATED);
 			
 		} catch (RegraNegocioException e) {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Empresa;
 import com.jlcb.desafioprodutecbackend.model.repository.EmpresaRepository;
 import com.jlcb.desafioprodutecbackend.service.EmpresaService;
@@ -26,9 +27,21 @@ public class EmpresaServiceImpl implements EmpresaService {
 	@Override
 	@Transactional
 	public Empresa salvar(Empresa empresa) {
+		
+		validarCnpj(empresa.getCnpj());
+		
 		return empresaRepository.save(empresa);
 	}
 	
+	@Override
+	public void validarCnpj(String cnpj) {
+		
+		boolean isCnpjExiste = empresaRepository.existsByCnpj(cnpj);
+		
+		if (isCnpjExiste) {
+			throw new RegraNegocioException("Já existe uma empresa cadastrada com esse CNPJ. Sendo assim, informe outro!");
+		}
+	}
 
 	@Override
 	@Transactional
