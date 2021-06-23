@@ -1,6 +1,7 @@
 package com.jlcb.desafioprodutecbackend.api.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,13 @@ public class GerenteResource {
 		return ResponseEntity.ok(gerentes);
 	}
 	
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+		return gerenteService.obterGerentePorId(id)
+					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
+					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+	
 	@PostMapping
 	public ResponseEntity<?> salvar(@RequestBody GerenteDTO dto) {
 		
@@ -50,6 +59,24 @@ public class GerenteResource {
 		}
 	}
 	
+	@PutMapping("{id}") 
+	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @RequestBody GerenteDTO dto) {
+		
+		Optional<Gerente> gerenteEncontrado = gerenteService.obterGerentePorId(id);
+		
+		if (gerenteEncontrado.isPresent()) {
+			
+			Gerente gerente = converterDtoParaGerente(dto);
+			gerente.setId(gerenteEncontrado.get().getId());
+			
+			gerenteService.atualizar(gerente);
+			
+			return ResponseEntity.ok(gerente);
+		} else {
+			return new ResponseEntity<>("Empresa não encontrada.", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@DeleteMapping("{id}")
 	public ResponseEntity<?> deletar (@PathVariable("id") Long id) {
 		
@@ -58,6 +85,17 @@ public class GerenteResource {
 			gerenteService.deletar(lancamentoEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity<>("Lançamento não encontrado.", HttpStatus.BAD_REQUEST));
+	}
+	
+	private GerenteDTO converterGerenteParaDto(Gerente gerente) {
+		
+		GerenteDTO dto = new GerenteDTO();
+		dto.setId(gerente.getId());
+		dto.setNome(gerente.getNome());
+		dto.setEmail(gerente.getEmail());
+		dto.setSenha(gerente.getSenha());
+		
+		return dto;
 	}
 	
 	private Gerente converterDtoParaGerente(GerenteDTO dto) {

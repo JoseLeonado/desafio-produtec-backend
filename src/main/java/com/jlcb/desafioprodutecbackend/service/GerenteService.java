@@ -15,8 +15,8 @@ public interface GerenteService {
 
 	void deletar(Gerente gerente);
 		
-//	Gerente atualizar(Gerente gerente);
-//	
+	Gerente atualizar(Gerente gerente);
+	
 //	void deletar(Gerente gerente);
 	
 	List<Gerente> listar();	

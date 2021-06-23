@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Gerente;
@@ -35,7 +36,15 @@ public class GerenteServiceImpl implements GerenteService {
 		return gerenteRepository.save(gerente);
 	}
 	
-
+	@Override
+	@Transactional
+	public Gerente atualizar(Gerente gerente) {
+		
+		Objects.requireNonNull(gerente.getId()); 
+		
+		return gerenteRepository.save(gerente);
+	}
+	
 	@Override
 	public void validarEmail(String email) {
 		
