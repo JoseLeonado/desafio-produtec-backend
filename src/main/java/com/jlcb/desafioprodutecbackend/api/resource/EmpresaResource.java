@@ -61,7 +61,7 @@ public class EmpresaResource {
 	}
 	
 	@PutMapping("{id}") 
-	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @RequestBody EmpresaDTO dto) {
+	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody EmpresaDTO dto) {
 		
 		Optional<Empresa> empresaEncontrada = empresaService.obterEmpresaPorId(id);
 		

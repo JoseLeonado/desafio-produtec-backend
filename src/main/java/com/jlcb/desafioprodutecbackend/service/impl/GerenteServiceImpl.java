@@ -51,7 +51,7 @@ public class GerenteServiceImpl implements GerenteService {
 		boolean isExiste = usuarioRepository.existsByEmail(email);
 		
 		if (isExiste) {
-			throw new RegraNegocioException("Já existe um gerente cadastrado com esse email. Sendo assim, informe outro!");
+			throw new RegraNegocioException("Já existe um gerente cadastrado com esse email. Sendo assim, informe outro email!");
 		}
 	}
 	

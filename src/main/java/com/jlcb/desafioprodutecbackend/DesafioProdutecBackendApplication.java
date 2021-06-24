@@ -10,9 +10,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.jlcb.desafioprodutecbackend.model.Usuario;
+import com.jlcb.desafioprodutecbackend.model.Gerente;
 import com.jlcb.desafioprodutecbackend.model.enums.Perfil;
-import com.jlcb.desafioprodutecbackend.model.repository.UsuarioRepository;
+import com.jlcb.desafioprodutecbackend.model.repository.GerenteRepository;
 
 @SpringBootApplication
 @EnableWebMvc
@@ -26,14 +26,15 @@ public class DesafioProdutecBackendApplication implements WebMvcConfigurer, Comm
 	public static void main(String[] args) {
 		SpringApplication.run(DesafioProdutecBackendApplication.class, args);
 	}
-
+	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private GerenteRepository gerenteRepository;
 	
 	@Override
 	public void run(String... args) throws Exception {
 		
-		Usuario usuario1 = new Usuario(null, "Gerente 1", "gerente@gmail.com", "123", Perfil.GERENTE, null);
-		usuarioRepository.saveAll(Arrays.asList(usuario1));
+		
+		Gerente gerente1 = new Gerente(null, "Gerente 1", "gerente@gmail.com", "123", Perfil.GERENTE);
+		gerenteRepository.saveAll(Arrays.asList(gerente1));
 	}
 }

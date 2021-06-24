@@ -39,7 +39,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 		boolean isCnpjExiste = empresaRepository.existsByCnpj(cnpj);
 		
 		if (isCnpjExiste) {
-			throw new RegraNegocioException("Já existe uma empresa cadastrada com esse CNPJ. Sendo assim, informe outro!");
+			throw new RegraNegocioException("Já existe uma empresa cadastrada com esse CNPJ. Sendo assim, informe outro CNPJ!");
 		}
 	}
 

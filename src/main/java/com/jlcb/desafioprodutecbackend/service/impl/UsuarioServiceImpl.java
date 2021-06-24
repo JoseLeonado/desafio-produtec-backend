@@ -81,7 +81,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		boolean isEmailExiste = usuarioRepository.existsByEmail(email);
 		
 		if (isEmailExiste) {
-			throw new RegraNegocioException("Já existe um usuário cadastrado com esse email. Sendo assim, informe outro!");
+			throw new RegraNegocioException("Já existe um usuário cadastrado com esse email. Sendo assim, informe outro email!");
 		}
 	}
 
@@ -115,7 +115,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public Optional<Usuario> buscarUsuarioPorId(Long id) {
+	public Optional<Usuario> obterUsuarioPorId(Long id) {
 		return usuarioRepository.findById(id);
 	}
 }

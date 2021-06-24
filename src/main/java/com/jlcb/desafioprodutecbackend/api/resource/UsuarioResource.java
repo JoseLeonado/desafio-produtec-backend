@@ -1,6 +1,7 @@
 package com.jlcb.desafioprodutecbackend.api.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -21,10 +22,8 @@ import com.jlcb.desafioprodutecbackend.api.dto.LoginDTO;
 import com.jlcb.desafioprodutecbackend.api.dto.UsuarioDTO;
 import com.jlcb.desafioprodutecbackend.exception.AutenticacoException;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
-import com.jlcb.desafioprodutecbackend.model.Empresa;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.model.enums.Perfil;
-import com.jlcb.desafioprodutecbackend.service.EmpresaService;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
 @RestController
@@ -34,9 +33,6 @@ public class UsuarioResource {
 	
 	@Autowired
 	private UsuarioService usuarioService;
-	
-	@Autowired
-	private EmpresaService empresaService;
 	
 	@PostMapping("/autenticar")
 	public ResponseEntity<?> autenticar(@RequestBody LoginDTO dto) {
@@ -56,7 +52,7 @@ public class UsuarioResource {
 	public ResponseEntity<?> listar(Long idUsuario) {
 		
 				
-		Usuario usuarioEncontrado = usuarioService.buscarUsuarioPorId(idUsuario).orElseThrow(); 
+		Usuario usuarioEncontrado = usuarioService.obterUsuarioPorId(idUsuario).orElseThrow(); 
 		
 		if (usuarioEncontrado == null) {
 			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
@@ -83,77 +79,62 @@ public class UsuarioResource {
 		}
 	}
 	
-//	@GetMapping
-//	public ResponseEntity<?> buscar(
-//			@RequestParam(value = "nome", required = false) String nome,
-//			@RequestParam(value = "email", required = false) String email,
-//			@RequestParam("usuario") Long idUsuario
-//			) {
-//		
-//		Usuario usuarioFiltro = new Usuario();
-//		usuarioFiltro.setNome(nome);
-//		usuarioFiltro.setEmail(email);
-//		
-//		Optional<Usuario> usuarioEncontrado = usuarioService.buscarUsuarioPorId(idUsuario); 
-//		
-//		if (!usuarioEncontrado.isPresent()) {
-//			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
-//		} else {
-//			usuarioFiltro.setEmpresa(usuarioFiltro.getEmpresa());
-//		}
-//		
-//		List<Usuario> usuarios = usuarioService.buscar(usuarioFiltro);
-//		
-//		return ResponseEntity.ok(usuarios);
-//	}
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+		return usuarioService.obterUsuarioPorId(id)
+					.map(usuario -> new ResponseEntity<>(converterUsuarioParaDto(usuario), HttpStatus.OK))
+					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
 	
 	@PutMapping("{id}") 
 	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDTO dto) {
 		
-		return usuarioService.buscarUsuarioPorId(id).map(usuarioEncontrado -> { 
+		Optional<Usuario> usuarioEncontrado = usuarioService.obterUsuarioPorId(id);
+		
+		if (usuarioEncontrado.isPresent()) {
 			
-			try {
-				
-				Usuario usuario =converterDtoParaUsuario(dto);
-				usuario.setId(usuarioEncontrado.getId());
-				usuarioService.atualizar(usuario);
-				
-				return ResponseEntity.ok(usuario);
-			} catch (RegraNegocioException e) {
-				return ResponseEntity.badRequest().body(e.getMessage());
-			}
-		}).orElseGet(() -> new ResponseEntity<>("Usuário não encontrado.", HttpStatus.BAD_REQUEST)); 
+			Usuario usuario = converterDtoParaUsuario(dto);
+			usuario.setId(usuarioEncontrado.get().getId());
+			
+			usuarioService.atualizar(usuario);
+			
+			return ResponseEntity.ok(usuario);
+		} else {
+			return new ResponseEntity<>("Gerente não encontrado", HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@DeleteMapping("{id}")
-	public ResponseEntity<?> deletar(@PathVariable("id") Long id) {
+	public ResponseEntity<?> deletar (@PathVariable("id") Long id) {
 		
-		return usuarioService.buscarUsuarioPorId(id).map(usuarioEncontrado -> {
+		return usuarioService.obterUsuarioPorId(id).map(usuarioEncontrado -> { 
 			
 			usuarioService.deletar(usuarioEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity<>("Usuário não encontrado.", HttpStatus.BAD_REQUEST));
-		
 	}
 	
+	
+	private UsuarioDTO converterUsuarioParaDto(Usuario usuario) {
+		
+		UsuarioDTO dto = new UsuarioDTO();
+		dto.setId(usuario.getId());
+		dto.setNome(usuario.getNome());
+		dto.setEmail(usuario.getEmail());
+		dto.setSenha(usuario.getSenha());
+		
+		return dto;
+	}
 	
 	private Usuario converterDtoParaUsuario(UsuarioDTO dto) {
 		
 		Usuario usuario = new Usuario();
-		usuario.setId(dto.getId());
 		usuario.setNome(dto.getNome());
 		usuario.setEmail(dto.getEmail());
 		usuario.setSenha(dto.getSenha());
+		usuario.setEmpresa(null);
+		usuario.setPerfil(Perfil.GERENTE);
 		
-		if (dto.getPerfil() != null) {
-			usuario.setPerfil(Perfil.valueOf(dto.getPerfil()));
-		}
-		
-		if (dto.getEmpresa() != null) {
-			Empresa empresa = empresaService.obterEmpresaPorId(dto.getEmpresa()).orElseThrow(() -> new RegraNegocioException("Empresa não encontrada	 para o id informado"));
-			usuario.setEmpresa(empresa);
-		}
-				
 		return usuario;
 	}
 }

@@ -21,6 +21,6 @@ public interface UsuarioService {
 	
 	List<Usuario> buscar(Usuario usuario);
 	
-	Optional<Usuario> buscarUsuarioPorId(Long id);
+	Optional<Usuario> obterUsuarioPorId(Long id);
 }
 

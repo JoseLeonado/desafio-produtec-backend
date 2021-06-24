@@ -3,6 +3,8 @@ package com.jlcb.desafioprodutecbackend.api.resource;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,24 +37,15 @@ public class GerenteResource {
 		
 		return ResponseEntity.ok(gerentes);
 	}
-	
-	@GetMapping("{id}")
-	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
-		return gerenteService.obterGerentePorId(id)
-					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
-					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-	}
-	
+		
 	@PostMapping
-	public ResponseEntity<?> salvar(@RequestBody GerenteDTO dto) {
+	public ResponseEntity<?> salvar(@Valid @RequestBody GerenteDTO dto) {
 		
 		Gerente gerente = converterDtoParaGerente(dto);
 		
 		try {
 			
 			Gerente gerenteSalvo = gerenteService.salvar(gerente);
-			
-			
 			
 			return new ResponseEntity<>(gerenteSalvo, HttpStatus.CREATED);
 			
@@ -61,8 +54,15 @@ public class GerenteResource {
 		}
 	}
 	
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+		return gerenteService.obterGerentePorId(id)
+					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
+					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+	
 	@PutMapping("{id}") 
-	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @RequestBody GerenteDTO dto) {
+	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody GerenteDTO dto) {
 		
 		Optional<Gerente> gerenteEncontrado = gerenteService.obterGerentePorId(id);
 		
@@ -75,7 +75,7 @@ public class GerenteResource {
 			
 			return ResponseEntity.ok(gerente);
 		} else {
-			return new ResponseEntity<>("Empresa não encontrada.", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Gerente não encontrado", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
