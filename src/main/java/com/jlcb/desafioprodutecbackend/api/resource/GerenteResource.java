@@ -37,6 +37,13 @@ public class GerenteResource {
 		
 		return ResponseEntity.ok(gerentes);
 	}
+	
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+		return gerenteService.obterGerentePorId(id)
+					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
+					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
 		
 	@PostMapping
 	public ResponseEntity<?> salvar(@Valid @RequestBody GerenteDTO dto) {
@@ -52,13 +59,6 @@ public class GerenteResource {
 		} catch (RegraNegocioException e) {
 			return  ResponseEntity.badRequest().body(e.getMessage());
 		}
-	}
-	
-	@GetMapping("{id}")
-	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
-		return gerenteService.obterGerentePorId(id)
-					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
-					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@PutMapping("{id}") 

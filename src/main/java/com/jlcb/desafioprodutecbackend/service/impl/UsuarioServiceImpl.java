@@ -54,12 +54,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 		List<Usuario> usuarios = new ArrayList<>();
 
 		if (usuario.getPerfil() == Perfil.ADMINISTRADOR || usuario.getPerfil() == Perfil.GERENTE) {
-			usuarios = usuarioRepository.findAll();
+			usuarios = usuarioRepository.findByAll(usuario.getId());
 		} else if (usuario.getPerfil() == Perfil.USUARIO) {
 			
 			Empresa empresa = empresaRepository.findById(usuario.getEmpresa().getId()).orElseThrow();
 			
-			usuarios = usuarioRepository.findByEmpresa(empresa);
+			usuarios = usuarioRepository.findByEmpresaAndUsuario(empresa, usuario.getId());
 		}
 		
 		return usuarios;

@@ -48,11 +48,10 @@ public class UsuarioResource {
 		}
 	}
 	
-	@GetMapping
-	public ResponseEntity<?> listar(Long idUsuario) {
-		
+	@PostMapping("/da-empresa")
+	public ResponseEntity<?> listar(@RequestBody UsuarioDTO dto) {
 				
-		Usuario usuarioEncontrado = usuarioService.obterUsuarioPorId(idUsuario).orElseThrow(); 
+		Usuario usuarioEncontrado = usuarioService.obterUsuarioPorId(dto.getId()).orElseThrow(); 
 		
 		if (usuarioEncontrado == null) {
 			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
@@ -61,6 +60,13 @@ public class UsuarioResource {
 		List<Usuario> usuarios = usuarioService.listar(usuarioEncontrado);
 		
 		return ResponseEntity.ok(usuarios);
+	}
+	
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+		return usuarioService.obterUsuarioPorId(id)
+					.map(usuario -> new ResponseEntity<>(converterUsuarioParaDto(usuario), HttpStatus.OK))
+					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@PostMapping
@@ -77,13 +83,6 @@ public class UsuarioResource {
 		} catch (RegraNegocioException e) {
 			return  ResponseEntity.badRequest().body(e.getMessage());
 		}
-	}
-	
-	@GetMapping("{id}")
-	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
-		return usuarioService.obterUsuarioPorId(id)
-					.map(usuario -> new ResponseEntity<>(converterUsuarioParaDto(usuario), HttpStatus.OK))
-					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@PutMapping("{id}") 
