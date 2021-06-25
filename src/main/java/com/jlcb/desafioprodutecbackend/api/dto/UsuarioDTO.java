@@ -25,4 +25,11 @@ public class UsuarioDTO {
 
 	@NotBlank(message = "Informe a senha do gerente!")
 	private String senha;
+	
+	private Long usuarioLogadoId;
+	
+	private Long empresaId;
+	
+	private String empresaNome;
+	
 }

@@ -22,8 +22,10 @@ import com.jlcb.desafioprodutecbackend.api.dto.LoginDTO;
 import com.jlcb.desafioprodutecbackend.api.dto.UsuarioDTO;
 import com.jlcb.desafioprodutecbackend.exception.AutenticacoException;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
+import com.jlcb.desafioprodutecbackend.model.Empresa;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.model.enums.Perfil;
+import com.jlcb.desafioprodutecbackend.service.EmpresaService;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
 @RestController
@@ -33,6 +35,9 @@ public class UsuarioResource {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private EmpresaService empresaService;
 	
 	@PostMapping("/autenticar")
 	public ResponseEntity<?> autenticar(@RequestBody LoginDTO dto) {
@@ -63,7 +68,7 @@ public class UsuarioResource {
 	}
 	
 	@GetMapping("{id}")
-	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
+	public ResponseEntity<?> obterUsuarioPorId(@PathVariable("id") Long id) {
 		return usuarioService.obterUsuarioPorId(id)
 					.map(usuario -> new ResponseEntity<>(converterUsuarioParaDto(usuario), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -88,12 +93,10 @@ public class UsuarioResource {
 	@PutMapping("{id}") 
 	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDTO dto) {
 		
-		Optional<Usuario> usuarioEncontrado = usuarioService.obterUsuarioPorId(id);
-		
-		if (usuarioEncontrado.isPresent()) {
+		if (usuarioLogado(id) != null) {
 			
 			Usuario usuario = converterDtoParaUsuario(dto);
-			usuario.setId(usuarioEncontrado.get().getId());
+			usuario.setId(usuarioLogado(id).getId());
 			
 			usuarioService.atualizar(usuario);
 			
@@ -131,9 +134,32 @@ public class UsuarioResource {
 		usuario.setNome(dto.getNome());
 		usuario.setEmail(dto.getEmail());
 		usuario.setSenha(dto.getSenha());
-		usuario.setEmpresa(null);
-		usuario.setPerfil(Perfil.GERENTE);
+		usuario.setPerfil(Perfil.USUARIO);
+
+		
+		if (usuarioLogado(dto.getUsuarioLogadoId()) != null) {
+			
+			if (usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.ADMINISTRADOR || usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.GERENTE) {
+				
+				Empresa empresa = empresaService.obterEmpresaPorId(dto.getEmpresaId()).orElseThrow(() -> new RegraNegocioException("Empresa não encontrado para o id informado"));
+				usuario.setEmpresa(empresa);
+				
+			} else if (usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.USUARIO && dto.getEmpresaId() == null) {
+				usuario.setEmpresa(usuarioLogado(dto.getUsuarioLogadoId()).getEmpresa());
+			}
+		}
 		
 		return usuario;
+	}
+		
+	private Usuario usuarioLogado(Long id) {
+		
+		Optional<Usuario> usuarioLogado = usuarioService.obterUsuarioPorId(id);
+
+		if (usuarioLogado.isPresent()) {
+			return usuarioLogado.get();
+		}
+		
+		return null;
 	}
 }
