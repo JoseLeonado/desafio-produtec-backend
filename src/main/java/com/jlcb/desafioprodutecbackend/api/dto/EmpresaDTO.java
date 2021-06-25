@@ -9,14 +9,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmpresaDTO {
-	
-	private Long id;
-	
+		
 	@CNPJ(message = "Número do registro de contribuinte corporativo brasileiro (CNPJ) inválido")
 	@NotBlank(message = "Informe o CNPJ da empresa!")
 	private String cnpj;
@@ -26,4 +23,6 @@ public class EmpresaDTO {
 	
 	@NotBlank(message = "Informe o Nome fantasia da empresa!")
 	private String nomeFantasia;
+	
+	private Long id;
 }

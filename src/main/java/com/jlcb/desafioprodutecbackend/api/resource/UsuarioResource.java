@@ -59,7 +59,7 @@ public class UsuarioResource {
 		Usuario usuarioEncontrado = usuarioService.obterUsuarioPorId(dto.getId()).orElseThrow(); 
 		
 		if (usuarioEncontrado == null) {
-			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
+			return ResponseEntity.badRequest().body("Não foi possível realizar a listagem. Usuário não encontrado para o id informado");
 		} 
 		
 		List<Usuario> usuarios = usuarioService.listar(usuarioEncontrado);
@@ -70,14 +70,14 @@ public class UsuarioResource {
 	@GetMapping("{id}")
 	public ResponseEntity<?> obterUsuarioPorId(@PathVariable("id") Long id) {
 		return usuarioService.obterUsuarioPorId(id)
-					.map(usuario -> new ResponseEntity<>(converterUsuarioParaDto(usuario), HttpStatus.OK))
+					.map(usuario -> new ResponseEntity<>(usuarioService.converterUsuarioParaDto(usuario), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> salvar(@Valid @RequestBody UsuarioDTO dto) {
 		
-		Usuario usuario = converterDtoParaUsuario(dto);
+		Usuario usuario = usuarioService.converterDtoParaUsuario(dto);
 		
 		try {
 			
@@ -93,16 +93,18 @@ public class UsuarioResource {
 	@PutMapping("{id}") 
 	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDTO dto) {
 		
-		if (usuarioLogado(id) != null) {
+		Optional<Usuario> usuarioEncontrado = usuarioService.obterUsuarioPorId(id);
+		
+		if (usuarioEncontrado.isPresent()) {
 			
-			Usuario usuario = converterDtoParaUsuario(dto);
-			usuario.setId(usuarioLogado(id).getId());
+			Usuario usuario = usuarioService.converterDtoParaUsuario(dto);
+			usuario.setId(usuarioEncontrado.get().getId());
 			
 			usuarioService.atualizar(usuario);
 			
 			return ResponseEntity.ok(usuario);
 		} else {
-			return new ResponseEntity<>("Produto não encontrado", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Usuario não encontrado!", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -114,52 +116,5 @@ public class UsuarioResource {
 			usuarioService.deletar(usuarioEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity<>("Usuário não encontrado.", HttpStatus.BAD_REQUEST));
-	}
-	
-	
-	private UsuarioDTO converterUsuarioParaDto(Usuario usuario) {
-		
-		UsuarioDTO dto = new UsuarioDTO();
-		dto.setId(usuario.getId());
-		dto.setNome(usuario.getNome());
-		dto.setEmail(usuario.getEmail());
-		dto.setSenha(usuario.getSenha());
-		
-		return dto;
-	}
-	
-	private Usuario converterDtoParaUsuario(UsuarioDTO dto) {
-		
-		Usuario usuario = new Usuario();
-		usuario.setNome(dto.getNome());
-		usuario.setEmail(dto.getEmail());
-		usuario.setSenha(dto.getSenha());
-		usuario.setPerfil(Perfil.USUARIO);
-
-		
-		if (usuarioLogado(dto.getUsuarioLogadoId()) != null) {
-			
-			if (usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.ADMINISTRADOR || usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.GERENTE) {
-				
-				Empresa empresa = empresaService.obterEmpresaPorId(dto.getEmpresaId()).orElseThrow(() -> new RegraNegocioException("Empresa não encontrado para o id informado"));
-				usuario.setEmpresa(empresa);
-				
-			} else if (usuarioLogado(dto.getUsuarioLogadoId()).getPerfil() == Perfil.USUARIO && dto.getEmpresaId() == null) {
-				usuario.setEmpresa(usuarioLogado(dto.getUsuarioLogadoId()).getEmpresa());
-			}
-		}
-		
-		return usuario;
-	}
-		
-	private Usuario usuarioLogado(Long id) {
-		
-		Optional<Usuario> usuarioLogado = usuarioService.obterUsuarioPorId(id);
-
-		if (usuarioLogado.isPresent()) {
-			return usuarioLogado.get();
-		}
-		
-		return null;
 	}
 }

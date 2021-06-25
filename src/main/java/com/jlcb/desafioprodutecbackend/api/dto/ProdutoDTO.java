@@ -1,35 +1,35 @@
 package com.jlcb.desafioprodutecbackend.api.dto;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProdutoDTO {
 	
-	private Long id;
-
-	@NotBlank(message = "Informe o nome do gerente!")
+	@NotBlank(message = "Informe o nome do produto!")
 	private String nome;
-
-	@NotBlank(message = "Informe o email do gerente!")
-	@Email(message = "Informe um email válido!")
-	private String email;
-
-	@NotBlank(message = "Informe a senha do gerente!")
-	private String senha;
+	
+	@NotBlank(message = "Informe a descrição do produto!")
+	private String descricao;	
+	
+	@NotBlank(message = "Informe o status do produto!")
+	private String status;
+	
+	@NotNull(message = "Informe a tabela de preço do produto!")
+	private Long precoId;
+	
+	private Long id;
 	
 	private Long usuarioLogadoId;
 	
-	private Long empresaId;
+	private Long colecaoId;
 	
-	private String empresaNome;
+	private Long empresaId;
 	
 }

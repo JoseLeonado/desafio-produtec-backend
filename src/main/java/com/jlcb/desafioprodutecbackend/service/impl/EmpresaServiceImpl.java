@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jlcb.desafioprodutecbackend.api.dto.EmpresaDTO;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Empresa;
 import com.jlcb.desafioprodutecbackend.model.repository.EmpresaRepository;
@@ -75,5 +76,28 @@ public class EmpresaServiceImpl implements EmpresaService {
 	@Override
 	public Optional<Empresa> obterEmpresaPorId(Long id) {
 		return empresaRepository.findById(id);
+	}
+	
+	@Override
+	public EmpresaDTO converterEmpresaParaDto(Empresa empresa) {
+		
+		EmpresaDTO dto = new EmpresaDTO();
+		dto.setId(empresa.getId());
+		dto.setCnpj(empresa.getCnpj());
+		dto.setRazaoSocial(empresa.getRazaoSocial());
+		dto.setNomeFantasia(empresa.getNomeFantasia());
+		
+		return dto;
+	}
+		
+	@Override
+	public Empresa converterDtoParaEmpresa(EmpresaDTO dto) {
+		
+		Empresa empresa = new Empresa();
+		empresa.setCnpj(dto.getCnpj());
+		empresa.setRazaoSocial(dto.getRazaoSocial());
+		empresa.setNomeFantasia(dto.getNomeFantasia());
+	
+		return empresa;
 	}
 }

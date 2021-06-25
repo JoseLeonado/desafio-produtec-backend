@@ -3,6 +3,7 @@ package com.jlcb.desafioprodutecbackend.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jlcb.desafioprodutecbackend.api.dto.EmpresaDTO;
 import com.jlcb.desafioprodutecbackend.model.Empresa;
 
 public interface EmpresaService {
@@ -18,5 +19,9 @@ public interface EmpresaService {
 	List<Empresa> listar();
 	
 	Optional<Empresa> obterEmpresaPorId(Long id);
+	
+	EmpresaDTO converterEmpresaParaDto(Empresa empresa);
+	
+	Empresa converterDtoParaEmpresa(EmpresaDTO dto);
 }
 

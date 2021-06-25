@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jlcb.desafioprodutecbackend.api.dto.ProdutoDTO;
+import com.jlcb.desafioprodutecbackend.api.dto.UsuarioDTO;
 import com.jlcb.desafioprodutecbackend.model.Produto;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.model.enums.Status;
@@ -26,5 +28,9 @@ public interface ProdutoService {
 	
 	Optional<Produto> obterProdutoPorId(Long id);
 	
-	URI uploadImagem(MultipartFile multipartFile);
+	URI uploadImagem(MultipartFile multipartFile, Long id);
+	
+	Produto converterDtoParaProduto(ProdutoDTO dto);
+	
+	ProdutoDTO converterProdutoParaDto(Produto produto);
 }

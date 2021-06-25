@@ -36,7 +36,7 @@ public class DesafioProdutecBackendApplication implements WebMvcConfigurer, Comm
 	
 	@Override
 	public void run(String... args) throws Exception {
-		
+				
 		Gerente gerente1 = new Gerente(null, "Gerente 1", "gerente@gmail.com", "123", Perfil.GERENTE);
 		gerenteRepository.saveAll(Arrays.asList(gerente1));
 		

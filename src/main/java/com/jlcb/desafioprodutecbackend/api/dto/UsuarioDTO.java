@@ -8,14 +8,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDTO {
 	
-	private Long id;
-
 	@NotBlank(message = "Informe o nome do gerente!")
 	private String nome;
 
@@ -25,6 +22,8 @@ public class UsuarioDTO {
 
 	@NotBlank(message = "Informe a senha do gerente!")
 	private String senha;
+	
+	private Long id;
 	
 	private Long usuarioLogadoId;
 	

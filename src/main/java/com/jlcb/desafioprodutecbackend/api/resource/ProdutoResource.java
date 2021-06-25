@@ -26,7 +26,6 @@ import com.jlcb.desafioprodutecbackend.api.dto.UsuarioDTO;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Produto;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
-import com.jlcb.desafioprodutecbackend.service.EmpresaService;
 import com.jlcb.desafioprodutecbackend.service.ProdutoService;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
@@ -40,18 +39,14 @@ public class ProdutoResource {
 	
 	@Autowired
 	private UsuarioService usuarioService;
-	
-	@Autowired
-	private EmpresaService empresaService;
-	
-	
+		
 	@PostMapping("/da-empresa")
 	public ResponseEntity<?> listar(@RequestBody UsuarioDTO dto) {
 				
 		Usuario usuarioEncontrado = usuarioService.obterUsuarioPorId(dto.getId()).orElseThrow(); 
 		
 		if (usuarioEncontrado == null) {
-			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
+			return ResponseEntity.badRequest().body("Não foi possível realizar a listagem. Usuário não encontrado para o id informado!");
 		} 
 		
 		List<Produto> produtos = produtoService.listar(usuarioEncontrado);
@@ -62,20 +57,21 @@ public class ProdutoResource {
 	@GetMapping("{id}")
 	public ResponseEntity<?> obterUsuarioPorId(@PathVariable("id") Long id) {
 		return produtoService.obterProdutoPorId(id)
-					.map(produto -> new ResponseEntity<>(converterProdutoParaDto(produto), HttpStatus.OK))
+					.map(produto -> new ResponseEntity<>(produtoService.converterProdutoParaDto(produto), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> salvar(@Valid @RequestBody ProdutoDTO dto) {
+	public ResponseEntity<?> salvar(@Valid @RequestBody ProdutoDTO dto, @RequestParam(name =  "multipartFile") MultipartFile multipartFile) {
 		
-		Produto produto = converterDtoParaProduto(dto);
+		Produto produto = produtoService.converterDtoParaProduto(dto);
 		
 		try {
 			
-			Produto usuarioSalvo = produtoService.salvar(produto);
+			Produto produtoSalvo = produtoService.salvar(produto);
+			produtoService.uploadImagem(multipartFile, dto.getUsuarioLogadoId());
 			
-			return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
+			return new ResponseEntity<>(produtoSalvo, HttpStatus.CREATED);
 			
 		} catch (RegraNegocioException e) {
 			return  ResponseEntity.badRequest().body(e.getMessage());
@@ -85,16 +81,18 @@ public class ProdutoResource {
 	@PutMapping("{id}") 
 	public ResponseEntity<?> atualizar(@PathVariable("id") Long id, @Valid @RequestBody ProdutoDTO dto) {
 		
-		if (usuarioLogado(id) != null) {
+		Optional<Produto> produtoEncontrado = produtoService.obterProdutoPorId(id);
+		
+		if (produtoEncontrado.isPresent()) {
 			
-			Produto produto = converterDtoParaProduto(dto);
-			produto.setId(usuarioLogado(id).getId());
+			Produto produto = produtoService.converterDtoParaProduto(dto);
+			produto.setId(id);
 			
 			produtoService.atualizar(produto);
 			
 			return ResponseEntity.ok(produto);
 		} else {
-			return new ResponseEntity<>("Produto não encontrado", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Produto não encontrado!", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -105,42 +103,13 @@ public class ProdutoResource {
 			
 			produtoService.deletar(produtoEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}).orElseGet(() -> new ResponseEntity<>("Produto não encontrado.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity<>("Produto não encontrado!", HttpStatus.BAD_REQUEST));
 	}
 	
 	@PostMapping("/imagem")
-	public ResponseEntity<?> uploadImagem(@RequestParam(name =  "multipartFile") MultipartFile multipartFile) {
+	public ResponseEntity<?> uploadImagem(@RequestParam(name =  "multipartFile") MultipartFile multipartFile, Long id) {
 		
-		URI uri = produtoService.uploadImagem(multipartFile);
+		URI uri = produtoService.uploadImagem(multipartFile, id);
 		return new ResponseEntity<>(uri, HttpStatus.CREATED);
-		
-	}
-	
-	private ProdutoDTO converterProdutoParaDto(Produto produto) {
-		
-		ProdutoDTO dto = new ProdutoDTO();
-		dto.setId(produto.getId());
-
-		
-		return dto;
-	}
-	
-	private Produto converterDtoParaProduto(ProdutoDTO dto) {
-		
-		Produto produto = new Produto();
-
-		
-		return produto;
-	}
-		
-	private Usuario usuarioLogado(Long id) {
-		
-		Optional<Usuario> usuarioLogado = usuarioService.obterUsuarioPorId(id);
-
-		if (usuarioLogado.isPresent()) {
-			return usuarioLogado.get();
-		}
-		
-		return null;
 	}
 }

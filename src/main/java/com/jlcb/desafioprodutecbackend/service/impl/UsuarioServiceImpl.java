@@ -14,6 +14,7 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jlcb.desafioprodutecbackend.api.dto.UsuarioDTO;
 import com.jlcb.desafioprodutecbackend.exception.AutenticacoException;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Empresa;
@@ -21,6 +22,7 @@ import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.model.enums.Perfil;
 import com.jlcb.desafioprodutecbackend.model.repository.EmpresaRepository;
 import com.jlcb.desafioprodutecbackend.model.repository.UsuarioRepository;
+import com.jlcb.desafioprodutecbackend.service.EmpresaService;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
 @Service
@@ -31,6 +33,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	@Autowired
 	private EmpresaRepository empresaRepository;
+	
+	@Autowired
+	private EmpresaService empresaService;
 	
 	@Override
 	public Usuario autenticar(String email, String senha) {
@@ -117,5 +122,55 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public Optional<Usuario> obterUsuarioPorId(Long id) {
 		return usuarioRepository.findById(id);
+	}
+	
+	@Override
+	public Optional<Usuario> usuarioLogado(Long id) {
+		
+		Optional<Usuario> usuarioLogado = obterUsuarioPorId(id);
+
+		if (usuarioLogado.isPresent()) {
+			return usuarioLogado;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Usuario converterDtoParaUsuario(UsuarioDTO dto) {
+		
+		Usuario usuario = new Usuario();
+		usuario.setNome(dto.getNome());
+		usuario.setEmail(dto.getEmail());
+		usuario.setSenha(dto.getSenha());
+		usuario.setPerfil(Perfil.USUARIO);
+		
+		Optional<Usuario> usuarioLogado = usuarioLogado(dto.getUsuarioLogadoId());
+		
+		if (usuarioLogado.isPresent()) {
+			
+			if (usuarioLogado.get().getPerfil() == Perfil.GERENTE) {
+				
+				Empresa empresa = empresaService.obterEmpresaPorId(dto.getEmpresaId()).orElseThrow(() -> new RegraNegocioException("Empresa não encontrado para o id informado!"));
+				usuario.setEmpresa(empresa);
+			} else if (usuarioLogado.get().getPerfil() == Perfil.USUARIO) {
+				usuario.setEmpresa(usuarioLogado.get().getEmpresa());
+			}
+			
+		}
+		
+		return usuario;
+	}
+	
+	@Override
+	public UsuarioDTO converterUsuarioParaDto(Usuario usuario) {
+		
+		UsuarioDTO dto = new UsuarioDTO();
+		dto.setId(usuario.getId());
+		dto.setNome(usuario.getNome());
+		dto.setEmail(usuario.getEmail());
+		dto.setSenha(usuario.getSenha());
+		
+		return dto;
 	}
 }

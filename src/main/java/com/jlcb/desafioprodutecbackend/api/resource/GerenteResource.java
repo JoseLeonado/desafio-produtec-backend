@@ -41,14 +41,14 @@ public class GerenteResource {
 	@GetMapping("{id}")
 	public ResponseEntity<?> obterGerentePorId(@PathVariable("id") Long id) {
 		return gerenteService.obterGerentePorId(id)
-					.map(gerente -> new ResponseEntity<>(converterGerenteParaDto(gerente), HttpStatus.OK))
+					.map(gerente -> new ResponseEntity<>(gerenteService.converterGerenteParaDto(gerente), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 		
 	@PostMapping
 	public ResponseEntity<?> salvar(@Valid @RequestBody GerenteDTO dto) {
 		
-		Gerente gerente = converterDtoParaGerente(dto);
+		Gerente gerente = gerenteService.converterDtoParaGerente(dto);
 		
 		try {
 			
@@ -68,14 +68,14 @@ public class GerenteResource {
 		
 		if (gerenteEncontrado.isPresent()) {
 			
-			Gerente gerente = converterDtoParaGerente(dto);
+			Gerente gerente = gerenteService.converterDtoParaGerente(dto);
 			gerente.setId(gerenteEncontrado.get().getId());
 			
 			gerenteService.atualizar(gerente);
 			
 			return ResponseEntity.ok(gerente);
 		} else {
-			return new ResponseEntity<>("Gerente não encontrado", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Gerente não encontrado!", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -86,29 +86,6 @@ public class GerenteResource {
 			
 			gerenteService.deletar(lancamentoEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}).orElseGet(() -> new ResponseEntity<>("Gerente não encontrado.", HttpStatus.BAD_REQUEST));
-	}
-	
-	private GerenteDTO converterGerenteParaDto(Gerente gerente) {
-		
-		GerenteDTO dto = new GerenteDTO();
-		dto.setId(gerente.getId());
-		dto.setNome(gerente.getNome());
-		dto.setEmail(gerente.getEmail());
-		dto.setSenha(gerente.getSenha());
-		
-		return dto;
-	}
-	
-	private Gerente converterDtoParaGerente(GerenteDTO dto) {
-		
-		Gerente gerente = new Gerente();
-		gerente.setNome(dto.getNome());
-		gerente.setEmail(dto.getEmail());
-		gerente.setSenha(dto.getSenha());
-		gerente.setEmpresa(null);
-		gerente.setPerfil(Perfil.GERENTE);
-		
-		return gerente;
+		}).orElseGet(() -> new ResponseEntity<>("Gerente não encontrado!", HttpStatus.BAD_REQUEST));
 	}
 }

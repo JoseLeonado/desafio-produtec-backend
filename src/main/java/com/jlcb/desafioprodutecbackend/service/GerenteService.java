@@ -3,6 +3,7 @@ package com.jlcb.desafioprodutecbackend.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jlcb.desafioprodutecbackend.api.dto.GerenteDTO;
 import com.jlcb.desafioprodutecbackend.model.Gerente;
 
 public interface GerenteService {
@@ -19,7 +20,8 @@ public interface GerenteService {
 		
 	Gerente atualizar(Gerente gerente);
 	
-//	void deletar(Gerente gerente);
+	GerenteDTO converterGerenteParaDto(Gerente gerente);
 	
+	Gerente converterDtoParaGerente(GerenteDTO dto);
 }
 

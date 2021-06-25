@@ -40,14 +40,14 @@ public class EmpresaResource {
 	@GetMapping("{id}")
 	public ResponseEntity<?> obterEmpresaPorId(@PathVariable("id") Long id) {
 		return empresaService.obterEmpresaPorId(id)
-					.map(empresa -> new ResponseEntity<>(converterEmpresaParaDto(empresa), HttpStatus.OK))
+					.map(empresa -> new ResponseEntity<>(empresaService.converterEmpresaParaDto(empresa), HttpStatus.OK))
 					.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 		
 	@PostMapping
 	public ResponseEntity<?> salvar(@Valid @RequestBody EmpresaDTO dto) {
 		
-		Empresa empresa = converterDtoParaEmpresa(dto);
+		Empresa empresa = empresaService.converterDtoParaEmpresa(dto);
 		
 		try {
 			
@@ -67,7 +67,7 @@ public class EmpresaResource {
 		
 		if (empresaEncontrada.isPresent()) {
 			
-			Empresa empresa = converterDtoParaEmpresa(dto);
+			Empresa empresa = empresaService.converterDtoParaEmpresa(dto);
 			empresa.setId(empresaEncontrada.get().getId());
 			
 			empresaService.atualizar(empresa);
@@ -86,26 +86,5 @@ public class EmpresaResource {
 			empresaService.deletar(empresaEncontrada);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity<>("Empresa não encontrado.", HttpStatus.BAD_REQUEST));
-	}
-	
-	private EmpresaDTO converterEmpresaParaDto(Empresa empresa) {
-		
-		EmpresaDTO dto = new EmpresaDTO();
-		dto.setId(empresa.getId());
-		dto.setCnpj(empresa.getCnpj());
-		dto.setRazaoSocial(empresa.getRazaoSocial());
-		dto.setNomeFantasia(empresa.getNomeFantasia());
-		
-		return dto;
-	}
-		
-	private Empresa converterDtoParaEmpresa(EmpresaDTO dto) {
-		
-		Empresa empresa = new Empresa();
-		empresa.setCnpj(dto.getCnpj());
-		empresa.setRazaoSocial(dto.getRazaoSocial());
-		empresa.setNomeFantasia(dto.getNomeFantasia());
-	
-		return empresa;
 	}
 }
