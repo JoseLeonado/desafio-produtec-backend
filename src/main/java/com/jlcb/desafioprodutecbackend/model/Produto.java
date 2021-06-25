@@ -46,4 +46,8 @@ public class Produto {
 	@ManyToOne
 	@JoinColumn(name = "id_preco")
 	private Preco preco;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_empresa")
+	private Empresa empresa;
 }

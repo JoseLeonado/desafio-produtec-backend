@@ -86,7 +86,7 @@ public class GerenteResource {
 			
 			gerenteService.deletar(lancamentoEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}).orElseGet(() -> new ResponseEntity<>("Lançamento não encontrado.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity<>("Gerente não encontrado.", HttpStatus.BAD_REQUEST));
 	}
 	
 	private GerenteDTO converterGerenteParaDto(Gerente gerente) {

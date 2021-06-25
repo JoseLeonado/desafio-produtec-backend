@@ -9,6 +9,8 @@ public interface UsuarioService {
 	
 	Usuario autenticar(String email, String senha);
 	
+	List<Usuario> listar(Usuario usuario);
+	
 	Usuario salvar(Usuario usuario);
 	
 	void validarEmail(String email);
@@ -16,8 +18,6 @@ public interface UsuarioService {
 	Usuario atualizar(Usuario usuario);
 	
 	void deletar(Usuario usuario);
-	
-	List<Usuario> listar(Usuario usuario);
 	
 	List<Usuario> buscar(Usuario usuario);
 	

@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.jlcb.desafioprodutecbackend.model.Gerente;
 
 public interface GerenteService {
+	
+	List<Gerente> listar();	
 		
 	Gerente salvar(Gerente gerente);
 	
@@ -19,6 +21,5 @@ public interface GerenteService {
 	
 //	void deletar(Gerente gerente);
 	
-	List<Gerente> listar();	
 }
 

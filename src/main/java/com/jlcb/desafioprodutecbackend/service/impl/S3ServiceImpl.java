@@ -15,9 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.jlcb.desafioprodutecbackend.service.S3Service;
 
 @Service
-public class S3ServiceImpl {
+public class S3ServiceImpl implements S3Service {
 	
 	private Logger LOG = LoggerFactory.getLogger(S3ServiceImpl.class);
 

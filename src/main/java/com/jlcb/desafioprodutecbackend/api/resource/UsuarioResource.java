@@ -102,7 +102,7 @@ public class UsuarioResource {
 			
 			return ResponseEntity.ok(usuario);
 		} else {
-			return new ResponseEntity<>("Gerente não encontrado", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Produto não encontrado", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
