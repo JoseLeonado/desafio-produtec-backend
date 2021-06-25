@@ -16,6 +16,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.jlcb.desafioprodutecbackend.service.S3Service;
+import com.jlcb.desafioprodutecbackend.service.exception.FileException;
 
 @Service
 public class S3ServiceImpl implements S3Service {
@@ -39,7 +40,7 @@ public class S3ServiceImpl implements S3Service {
 			
 			return uploadFoto(nomeDoArquivo, inputStream, tipoDoArquivo);
 		} catch (IOException e) {
-			throw new RuntimeException("Erro: " + e.getMessage());
+			throw new FileException("Erro: " + e.getMessage());
 		}
 	}
 
@@ -58,7 +59,7 @@ public class S3ServiceImpl implements S3Service {
 
 			return s3Client.getUrl(bucketNome, nomDoArquivo).toURI();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Erro ao converter URL para URI");
+			throw new FileException("Erro ao converter URL para URI");
 		}
 
 	}
