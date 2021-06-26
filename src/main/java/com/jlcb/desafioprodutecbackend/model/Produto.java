@@ -29,6 +29,9 @@ public class Produto {
 	@Column(name = "id")
 	private Long id;
 	
+	@Column(name =  "fotoUrl")
+	private String fotoUrl;
+	
 	@Column(name = "nome")
 	private String nome;
 	

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +28,7 @@ import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Produto;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
 import com.jlcb.desafioprodutecbackend.service.ProdutoService;
+import com.jlcb.desafioprodutecbackend.service.S3Service;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
 
 @RestController
@@ -39,6 +41,9 @@ public class ProdutoResource {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private S3Service s3Service;
 		
 	@PostMapping("/da-empresa")
 	public ResponseEntity<?> listar(@RequestBody UsuarioDTO dto) {
@@ -62,14 +67,15 @@ public class ProdutoResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> salvar(@Valid @RequestBody ProdutoDTO dto, @RequestParam(name =  "multipartFile") MultipartFile multipartFile) {
+	public ResponseEntity<?> salvar(@RequestParam(name = "file") MultipartFile file,  @ModelAttribute ProdutoDTO dto) {
 		
-		Produto produto = produtoService.converterDtoParaProduto(dto);
 		
 		try {
 			
-			Produto produtoSalvo = produtoService.salvar(produto);
-			produtoService.uploadImagem(multipartFile, dto.getUsuarioLogadoId());
+			Produto produtoSalvo = produtoService.converterDtoParaProduto(dto);
+			URI uri = s3Service.uploadFoto(file);
+			produtoSalvo.setFotoUrl(uri.toString());
+			produtoService.salvar(produtoSalvo);
 			
 			return new ResponseEntity<>(produtoSalvo, HttpStatus.CREATED);
 			
@@ -104,12 +110,5 @@ public class ProdutoResource {
 			produtoService.deletar(produtoEncontrado);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity<>("Produto não encontrado!", HttpStatus.BAD_REQUEST));
-	}
-	
-	@PostMapping("/imagem")
-	public ResponseEntity<?> uploadImagem(@RequestParam(name =  "multipartFile") MultipartFile multipartFile, Long id) {
-		
-		URI uri = produtoService.uploadImagem(multipartFile, id);
-		return new ResponseEntity<>(uri, HttpStatus.CREATED);
 	}
 }

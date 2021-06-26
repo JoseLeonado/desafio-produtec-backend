@@ -1,36 +1,26 @@
 package com.jlcb.desafioprodutecbackend.service.impl;
 
-import java.awt.image.BufferedImage;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.jlcb.desafioprodutecbackend.api.dto.ProdutoDTO;
 import com.jlcb.desafioprodutecbackend.exception.RegraNegocioException;
 import com.jlcb.desafioprodutecbackend.model.Empresa;
-import com.jlcb.desafioprodutecbackend.model.Preco;
 import com.jlcb.desafioprodutecbackend.model.Produto;
 import com.jlcb.desafioprodutecbackend.model.Usuario;
-import com.jlcb.desafioprodutecbackend.model.Produto;
 import com.jlcb.desafioprodutecbackend.model.enums.Perfil;
 import com.jlcb.desafioprodutecbackend.model.enums.Status;
 import com.jlcb.desafioprodutecbackend.model.repository.EmpresaRepository;
 import com.jlcb.desafioprodutecbackend.model.repository.ProdutoRepository;
 import com.jlcb.desafioprodutecbackend.service.EmpresaService;
-import com.jlcb.desafioprodutecbackend.service.ImagemService;
 import com.jlcb.desafioprodutecbackend.service.ProdutoService;
-import com.jlcb.desafioprodutecbackend.service.S3Service;
 import com.jlcb.desafioprodutecbackend.service.UsuarioService;
-import com.jlcb.minhasfinancas.service.exception.RegraDeNegocioException;
-import com.jlcb.desafioprodutecbackend.service.ProdutoService;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
@@ -46,16 +36,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Autowired
 	private EmpresaService empresaService;
-	
-	@Autowired
-	private S3Service s3Service;
 
-	@Autowired
-	private ImagemService ImagemService;
-	
-	@Value("${imagem.prefix.produto.id}")
-	private String prefixo;
-	
 	@Override
 	public List<Produto> listar(Usuario usuario) {
 		
@@ -114,15 +95,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public Optional<Produto> obterProdutoPorId(Long id) {
 		return produtoRepository.findById(id);
 	}
-
-	@Override
-	public URI uploadImagem(MultipartFile multipartFile, Long id) {
-		
-		BufferedImage imagemJpg = ImagemService.getImageJpg(multipartFile);
-		String imagemNome = prefixo + id + ".jpg";
-		
-		return s3Service.uploadFoto(imagemNome, ImagemService.getInputStream(imagemJpg, ".jpg"), "image");
-	}
 	
 	@Override
 	public Produto converterDtoParaProduto(ProdutoDTO dto) {
@@ -130,8 +102,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 		Produto produto = new Produto();
 		produto.setNome(dto.getNome());
 		produto.setDescricao(dto.getDescricao());
+		produto.setStatus(Status.ATIVO);
 		
-		produto.setStatus(Status.valueOf(dto.getStatus()));
 		
 //		Preco preco = precoService.obterPrecoPorId(dto.getPrecoId()).orElseThrow(() -> new RegraDeNegocioException("Preço não encontrado para o id informado!"));
 //		produto.setPreco(preco);
